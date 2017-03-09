@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 ros::init(argc, argv, "arm_publish");
 
 ros::NodeHandle n;
-ros::Publisher pb=n.advertise<trajectory_msgs::JointTrajectory>("arm_controller/command", 10);
+ros::Publisher pb=n.advertise<trajectory_msgs::JointTrajectory>("/arm_controller/command", 10);
 
 trajectory_msgs::JointTrajectory Control_message;
 
@@ -66,6 +66,15 @@ trajectory_msgs::JointTrajectoryPoint p2;
 
 pb.publish(Control_message);
 
+if(!pb){
+ROS_ERROR("MESSAGE PUBLISH FAILED");
+}
+
+else{
+
+ROS_INFO("MESSAGE PUBLISH DONE");
+}
 
 
+return 0;
 }
