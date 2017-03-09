@@ -200,3 +200,8 @@ include_directories(
 add_executable(test_client  src/test_client.cpp)
 target_link_libraries(test_client ${catkin_LIBRARIES})
 add_dependencies(test_client test_controller_gencpp)
+
+add_executable(arm_publish  src/arm_publish.cpp)
+target_link_libraries(arm_publish ${catkin_LIBRARIES})
+add_dependencies(arm_publish test_controller_gencpp)
+
