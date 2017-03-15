@@ -39,7 +39,7 @@ find_package(catkin REQUIRED COMPONENTS
 #)
 
 catkin_package(
-  INCLUDE_DIRS include
+  #INCLUDE_DIRS include
   #LIBRARIES test_controller
   CATKIN_DEPENDS moveit_core roscpp
   DEPENDS system_lib
