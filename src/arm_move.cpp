@@ -20,7 +20,7 @@ int main(int argc, char **argv)
   spinner.start();
 
   static const std::string PLANNING_GROUP = "manipulator"; //Changed from right_arm
-
+  ROS_INFO_NAMED("arm_move","STARTING MOVEMENT SCRIPT");
   // The :move_group_interface:`MoveGroup` class can be easily
   // setup using just the name of the planning group you would like to control and plan for.		         
   moveit::planning_interface::MoveGroup move_group(PLANNING_GROUP);
@@ -35,6 +35,9 @@ int main(int argc, char **argv)
   ROS_INFO("Reference frame: %s", move_group.getPlanningFrame().c_str());
 
   ROS_INFO("Reference frame: %s", move_group.getEndEffectorLink().c_str());
+
+  const robot_state::JointModelGroup *joint_model_group =
+  move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
   geometry_msgs::Pose target_pose1;
   target_pose1.orientation.w = 1.0;
@@ -114,8 +117,7 @@ int main(int argc, char **argv)
   start_pose2.position.x = 0.55;
   start_pose2.position.y = -0.05;
   start_pose2.position.z = 0.8;
-  const robot_state::JointModelGroup *joint_model_group =
-                  start_state.getJointModelGroup(move_group.getName());
+  
   start_state.setFromIK(joint_model_group, start_pose2);
   move_group.setStartState(start_state);
   
@@ -244,9 +246,6 @@ int main(int argc, char **argv)
   planning_scene_interface.removeCollisionObjects(object_ids);
   /* Sleep to give Rviz time to show the object is no longer there. */
   sleep(4.0);
-
-  
-  //ros::Duration(5).sleep();
 
   ros::shutdown();
   return 0;
