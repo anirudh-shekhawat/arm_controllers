@@ -60,7 +60,7 @@ ROS_INFO("CURRENT_STATE_ORIENTATION_w: %f",current_pose_message.pose.orientation
 move_group.setPlanningTime(60*5);
 move_group.setGoalTolerance(.001);
 
-move_group.setPositionTarget(0.28,0.7,0.8,"tool0");
+move_group.setPositionTarget(0.28,0.7,0.8,move_group.getEndEffectorLink());
 
 moveit::planning_interface::MoveGroup::Plan my_plan;
 
@@ -96,7 +96,7 @@ ROS_INFO("CURRENT_STATE_ORIENTATION_w: %f",pose_message.pose.orientation.w);
 
 
  
-  move_group.setPositionTarget(0.58,0.28,0.48,"tool0");
+  move_group.setPositionTarget(0.58,0.28,0.48,move_group.getEndEffectorLink());
 
   moveit::planning_interface::MoveGroup::Plan my_plan_2;
 
@@ -121,7 +121,7 @@ ROS_INFO("CURRENT_STATE_ORIENTATION_w: %f",pose_message_new.pose.orientation.w);
 
 
 
-move_group.setOrientationTarget (0,0,0,1.0,"tool0");
+move_group.setOrientationTarget (0,0,0,1.0,move_group.getEndEffectorLink());
 
   moveit::planning_interface::MoveGroup::Plan my_plan_3;
 
@@ -172,33 +172,33 @@ ROS_INFO("CURRENT_STATE_ORIENTATION_w: %f",pose_message_or.pose.orientation.w);
   // for the end-effector to go through. Note that we are starting 
   // from the new start state above.  The initial pose (start state) does not
   // need to be added to the waypoint list.
-  // std::vector<geometry_msgs::Pose> waypoints;
+  std::vector<geometry_msgs::Pose> waypoints;
 
-  // geometry_msgs::Pose target_pose3 = start_pose2;
-  // target_pose3.position.x += 0.2;
-  // target_pose3.position.z += 0.2;
-  // waypoints.push_back(target_pose3);  // up and out
+  geometry_msgs::Pose target_pose3 = start_pose2;
+  target_pose3.position.x += 0.2;
+  target_pose3.position.z += 0.2;
+  waypoints.push_back(target_pose3);  // up and out
 
-  // target_pose3.position.y -= 0.2;
-  // waypoints.push_back(target_pose3);  // left
+  target_pose3.position.y -= 0.2;
+  waypoints.push_back(target_pose3);  // left
 
-  // target_pose3.position.z -= 0.2;
-  // target_pose3.position.y += 0.2;
-  // target_pose3.position.x -= 0.2;
-  // waypoints.push_back(target_pose3);  // down and right (back to start)
+  target_pose3.position.z -= 0.2;
+  target_pose3.position.y += 0.2;
+  target_pose3.position.x -= 0.2;
+  waypoints.push_back(target_pose3);  // down and right (back to start)
 
-  // We want the cartesian path to be interpolated at a resolution of 1 cm
-  // which is why we will specify 0.01 as the max step in cartesian
-  // translation.  We will specify the jump threshold as 0.0, effectively
-  // disabling it.
-  // moveit_msgs::RobotTrajectory trajectory;
-  // double fraction = move_group.computeCartesianPath(waypoints,
-  //                                              0.01,  // eef_step
-  //                                              0.0,   // jump_threshold
-  //                                              trajectory);
+  We want the cartesian path to be interpolated at a resolution of 1 cm
+  which is why we will specify 0.01 as the max step in cartesian
+  translation.  We will specify the jump threshold as 0.0, effectively
+  disabling it.
+  moveit_msgs::RobotTrajectory trajectory;
+  double fraction = move_group.computeCartesianPath(waypoints,
+                                               0.01,  // eef_step
+                                               0.0,   // jump_threshold
+                                               trajectory);
 
-  // ROS_INFO("Visualizing plan 4 (cartesian path) (%.2f%% acheived)",
-  //       fraction * 100.0);    
+  ROS_INFO("Visualizing plan 4 (cartesian path) (%.2f%% acheived)",
+        fraction * 100.0);    
   /* Sleep to give Rviz time to visualize the plan. */
   //sleep(15.0);
 
