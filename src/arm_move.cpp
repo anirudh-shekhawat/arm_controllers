@@ -39,13 +39,14 @@ int main(int argc, char **argv)
   
   ROS_INFO("Reference frame: %s", move_group.getPlanningFrame().c_str());
 
-  ROS_INFO("Reference frame: %s", move_group.getEndEffectorLink().c_str());
+  ROS_INFO("End effector link: %s", move_group.getEndEffectorLink().c_str());
 
   const robot_state::JointModelGroup *joint_model_group =
   move_group.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
 
-geometry_msgs::PoseStamped current_pose_message;
+geometry_msgs::PoseStamped current_pose_message , home_pose_message ;
 current_pose_message=move_group.getCurrentPose(move_group.getEndEffectorLink() );
+home_pose_message = current_pose_message ;
 sleep(2.0);
 ROS_INFO("CURRENT_STATE_POSITION_X: %f",current_pose_message.pose.position.x);
 ROS_INFO("CURRENT_STATE_POSITION_Y: %f",current_pose_message.pose.position.y);
@@ -60,25 +61,13 @@ ROS_INFO("CURRENT_STATE_ORIENTATION_w: %f",current_pose_message.pose.orientation
 move_group.setPlanningTime(60*5);
 move_group.setGoalTolerance(.001);
 
-move_group.setPositionTarget(0.28,0.7,0.8,"tool0");
+move_group.setPositionTarget(0.28,0.7,0.8,move_group.getEndEffectorLink());
 
 moveit::planning_interface::MoveGroup::Plan my_plan;
 
   bool success = move_group.plan(my_plan);
 
    ROS_INFO(" plan 1 (position goal) %s",success?"":"FAILED");
-//   /* Sleep to give Rviz time to visualize the plan. */
- //  sleep(5.0);
-
-  // if (1)
-  // {
-  // 	ROS_INFO("Visualizing plan 1 (again)");
-  // 	display_trajectory.trajectory_start = my_plan.start_state_;
-  // 	display_trajectory.trajectory.push_back(my_plan.trajectory_);
-  // 	display_publisher.publish(display_trajectory);
-  // 	/* Sleep to give Rviz time to visualize the plan. */
-  // 	sleep(5.0);
-  // }
 
 move_group.move();
 sleep(2.0);
@@ -96,7 +85,7 @@ ROS_INFO("CURRENT_STATE_ORIENTATION_w: %f",pose_message.pose.orientation.w);
 
 
  
-  move_group.setPositionTarget(0.58,0.28,0.48,"tool0");
+  move_group.setPositionTarget(0.58,0.28,0.48,move_group.getEndEffectorLink());
 
   moveit::planning_interface::MoveGroup::Plan my_plan_2;
 
@@ -121,19 +110,40 @@ ROS_INFO("CURRENT_STATE_ORIENTATION_w: %f",pose_message_new.pose.orientation.w);
 
 
 
-move_group.setOrientationTarget (0,0,0,1.0,"tool0");
-
+//move_group.setOrientationTarget (0,0,0,1.0,move_group.getEndEffectorLink());
+  move_group.setPositionTarget(0.28,0.7,0.8,move_group.getEndEffectorLink());
   moveit::planning_interface::MoveGroup::Plan my_plan_3;
 
   success = move_group.plan(my_plan_3);
 
-  ROS_INFO(" plan 3(orientation goal) %s",success?"":"FAILED");
+  ROS_INFO(" plan 3(Position goal) %s",success?"":"FAILED");
 
 
 move_group.move();
 sleep(2.0);
 
 geometry_msgs::PoseStamped pose_message_or;
+pose_message_or=move_group.getCurrentPose(move_group.getEndEffectorLink() );
+
+ROS_INFO("CURRENT_STATE_POSITION_X: %f",pose_message_or.pose.position.x);
+ROS_INFO("CURRENT_STATE_POSITION_Y: %f",pose_message_or.pose.position.y);
+ROS_INFO("CURRENT_STATE_POSITION_Z: %f",pose_message_or.pose.position.z);
+ROS_INFO("CURRENT_STATE_ORIENTATION_X: %f",pose_message_or.pose.orientation.x);
+ROS_INFO("CURRENT_STATE_ORIENTATION_y: %f",pose_message_or.pose.orientation.y);
+ROS_INFO("CURRENT_STATE_ORIENTATION_z: %f",pose_message_or.pose.orientation.z);
+ROS_INFO("CURRENT_STATE_ORIENTATION_w: %f",pose_message_or.pose.orientation.w);
+
+move_group.setPositionTarget(home_pose_message.pose.position.x,home_pose_message.pose.position.y,home_pose_message.pose.position.z,move_group.getEndEffectorLink());
+  moveit::planning_interface::MoveGroup::Plan my_plan_4;
+
+  success = move_group.plan(my_plan_4);
+
+  ROS_INFO(" plan 4(Position goal) %s",success?"":"FAILED");
+
+
+move_group.move();
+sleep(2.0);
+
 pose_message_or=move_group.getCurrentPose(move_group.getEndEffectorLink() );
 
 ROS_INFO("CURRENT_STATE_POSITION_X: %f",pose_message_or.pose.position.x);
